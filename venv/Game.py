@@ -5,6 +5,8 @@ from pygame.locals import *
 
 pygame.init()
 
+FPS = 30
+
 # Constants for screen width and height
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
@@ -95,21 +97,22 @@ def main():
     screen.fill((BLACK))
 
     # Set a caption
-    pygame.display.set_caption("Clicker")
+    pygame.display.set_caption("Quest Master")
 
     while True:
         run_game()
 
 
 def run_game():
-    amount = items["Debug item"][0]
-    price = items["Debug item"][1]
+    debug_item_amount = items["Debug item"][0]
+    debug_item_price = items["Debug item"][1]
 
-    # Test button
-    green_button = button((0, 255, 0), 2, 2, 250, 100, 500, 110)
+    # Test buttons
+    test_quest_button = button((0, 255, 0), 2, 2, 250, 100, 500, 110)
+    test_sell_button = button((255, 0, 0,), 2, 150, 250, 100, 500, 110)
 
     # Inventory
-    item_inventory = inventory((0, 0, 0), 1000, 2, 278, 716, 1000, 4, 1150, 4, "Inventory", f'Debug Item: {amount}', f'Price: {price}')
+    item_inventory = inventory((0, 0, 0), 1000, 2, 278, 716, 1000, 4, 1150, 4, "Inventory", f'Debug Item: {debug_item_amount}', f'Price: {debug_item_price}')
 
     # Variable for game loop
     running = True
@@ -131,21 +134,24 @@ def run_game():
                 terminate()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if green_button.is_over(mouse_pos):
-                    amount += 1
-                    price += 10
-                    print(amount)
+                if test_quest_button.is_over(mouse_pos):
+                    debug_item_amount += random.randint(1, 6)
+                    debug_item_price += debug_item_amount * 10
                     screen.fill((BLACK))
-                    item_inventory.draw_inventory_text(screen, f'Debug item: {amount}', f'Price: {price}')
-                    # green_button = button((0, 255, 0), 2, 2, 250, 100, 35, 110, f'Clicks: {amount}', f'Price: {price}')
+                elif test_sell_button.is_over(mouse_pos):
+                    debug_item_amount -= debug_item_amount
+                    debug_item_price -= debug_item_price
 
-        green_button.draw(screen, (0, 0, 0))
+        test_quest_button.draw(screen, (0, 0, 0))
+        test_sell_button.draw(screen, (0, 0, 0))
         item_inventory.draw(screen,(0, 255, 255))
 
-        if amount >= 1:
-            item_inventory.draw_inventory_text(screen, f'Debug item: {amount}', f'Price: {price}')
+        if debug_item_amount >= 1:
+            item_inventory.draw_inventory_text(screen, f'Debug item: {debug_item_amount}', f'Price: {debug_item_price}')
 
         pygame.display.update()
+
+        clock.tick(FPS)
 
 def terminate():
     pygame.quit()
