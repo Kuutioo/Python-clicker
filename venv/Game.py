@@ -11,15 +11,22 @@ SCREEN_HEIGHT = 480
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
+# Items
+items = {
+    "Debug item" : [0, 0]
+}
+
+
 
 class button():
-    def __init__(self, color, x, y, width, height, text = ""):
+    def __init__(self, color, x, y, width, height, text = "", item_price = ""):
         self.color = color
         self.x = x
         self.y = y
         self.width = width
         self.height = height
         self.text = text
+        self.item_price = item_price
 
     def draw(self, screen, outline = None):
         if outline:
@@ -31,6 +38,11 @@ class button():
             font = pygame.font.SysFont(None, 60)
             text = font.render(self.text, True, (0, 0, 0))
             screen.blit(text, (self.x + (self.width / 2 - text.get_width() / 2), self.y + (self.height / 2 - text.get_height() / 2)))
+
+        if self.item_price != "":
+            price_font = pygame.font.SysFont(None, 60)
+            price_text = price_font.render(self.item_price, True, (0, 0, 0))
+            screen.blit(price_text, (self.x + (self.width / 4 - price_text.get_width() / 4), self.y + (self.height / 4 - price_text.get_height() / 4)))
 
     def is_over(self, pos):
         if pos[0] > self.x and pos[0] < self.x + self.width:
@@ -51,9 +63,11 @@ def main():
 
 
 def run_game():
+    amount = items["Debug item"][0]
+    price = items["Debug item"][1]
 
     # Test button
-    green_button = button((0, 255, 0), 150, 225, 250, 100, "Click me!")
+    green_button = button((0, 255, 0), 150, 225, 250, 100, f'Clicks: {amount}', f'Price: {price}')
 
     # Variable for game loop
     running = True
@@ -61,8 +75,9 @@ def run_game():
     # clock to tick
     clock = pygame.time.Clock()
 
-    while running:
 
+
+    while running:
         # Mouse position
         mouse_pos = pygame.mouse.get_pos()
 
@@ -77,13 +92,10 @@ def run_game():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if green_button.is_over(mouse_pos):
-                    print("Button clicked")
-
-            if event.type == MOUSEMOTION:
-                if green_button.is_over(mouse_pos):
-                    green_button.color = (255, 0, 0)
-                else:
-                    green_button.color = (0, 255, 0)
+                    amount += 1
+                    price += 10
+                    print(amount)
+                    green_button = button((0, 255, 0), 150, 225, 250, 100, f'Clicks: {amount}' , f'Price: {price}')
 
         green_button.draw(screen, (0, 0, 0))
 
