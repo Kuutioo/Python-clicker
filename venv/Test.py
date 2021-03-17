@@ -1,3 +1,2 @@
-print("Hello world!")
-# Comment test
-# new comment
+def terve():
+    print("Kakka perse")
