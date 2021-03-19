@@ -15,25 +15,29 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # Items
 items = {
-    "Debug item" : [0, 0]
+    "Debug item" : [0, 0],
+    "Wood" : [0, 0],
+    "Stone" : [0, 0],
+    "Iron" : [0, 0]
 }
 
 # Colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+CYAN = (0, 255, 255)
 
 
 class button():
-    def __init__(self, color, x, y, width, height, item_price_x, item_price_y, text = "", item_price = "", ):
+    def __init__(self, color, x, y, width, height, text = ""):
         self.color = color
         self.x = x
         self.y = y
         self.width = width
         self.height = height
         self.text = text
-        self.item_price = item_price
-        self.item_price_x = item_price_x
-        self.item_price_y = item_price_y
 
     def draw(self, screen, outline = None):
         if outline:
@@ -46,10 +50,6 @@ class button():
             text = font.render(self.text, True, (0, 0, 0))
             screen.blit(text, (self.x + (self.width / 2 - text.get_width() / 2), self.y + (self.height / 2 - text.get_height() / 2)))
 
-        if self.item_price != "":
-            price_font = pygame.font.SysFont("calibri", 30)
-            price_text = price_font.render(self.item_price, True, (0, 0, 0))
-            screen.blit(price_text, (self.item_price_x, self.item_price_y))
 
     def is_over(self, pos):
         if pos[0] > self.x and pos[0] < self.x + self.width:
@@ -59,25 +59,43 @@ class button():
 
 
 class inventory():
-    def __init__(self, color, box_x, box_y, box_width, box_height, item_name_x, item_name_y, item_price_x, item_price_y, inventory_text = "", item_name = "", item_price = ""):
+    def __init__(self, color, box_x, box_y, box_width, box_height, display_x, display_y, display_width, display_height, inventory_text = ""):
         self.color = color
         self.box_x = box_x
         self.box_y = box_y
         self.box_width = box_width
         self.box_height = box_height
-        self.item_name_x = item_name_x
-        self.item_name_y = item_name_y
-        self.item_price_x = item_price_x
-        self.item_price_y = item_price_y
+        self.display_x = display_x
+        self.display_y = display_y
+        self.display_width = display_width
+        self.display_height = display_height
         self.inventory_text = inventory_text
-        self.item_name = item_name
-        self.item_price = item_price
 
     def draw(self, screen, outline = None):
         if outline:
             pygame.draw.rect(screen, outline, (self.box_x - 2, self.box_y - 2, self.box_width + 4, self.box_height + 4), 0)
 
         pygame.draw.rect(screen, self.color, (self.box_x, self.box_y, self.box_width, self.box_height), 0)
+
+    def draw_item_display(self, screen, outline = None):
+        pygame.draw.rect(screen, self.color, (self.display_x, self.display_y, self.display_width, self.display_height), 0)
+
+class inventory_button():
+    def __init__(self, color, x, y, width, height, item_name_x, item_name_y, item_price_x, item_price_y, item_name = "", item_price = ""):
+        self.color = color
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.item_name_x = item_name_x
+        self.item_name_y = item_name_y
+        self.item_price_x = item_price_x
+        self.item_price_y = item_price_y
+        self.item_name = item_name
+        self.item_price = item_price
+
+    def draw(self, screen, outline = None):
+        pygame.draw.rect(screen, self.color, (self.x, self.y, self.width, self.height), 0)
 
     def draw_inventory_text(self, screen, _itemname = "", _itemprice = ""):
         if self.item_name != "":
@@ -90,7 +108,11 @@ class inventory():
             item_price_text = item_price_font.render(_itemprice, True, (WHITE))
             screen.blit(item_price_text, (self.item_price_x, self.item_price_y))
 
-
+    def is_over(self, pos):
+        if pos[0] > self.x and pos[0] < self.x + self.width:
+            if pos[1] > self.y and pos[1] < self.y + self.height:
+                return True
+        return False
 
 def main():
     # Make screen
@@ -106,13 +128,19 @@ def main():
 def run_game():
     debug_item_amount = items["Debug item"][0]
     debug_item_price = items["Debug item"][1]
+    wood_item_amount = items["Wood"][0]
+    wood_item_price = items["Wood"][1]
 
     # Test buttons
-    test_quest_button = button((0, 255, 0), 2, 2, 250, 100, 500, 110)
-    test_sell_button = button((255, 0, 0,), 2, 150, 250, 100, 500, 110)
+    test_quest_button = button((GREEN), 2, 2, 250, 100)
+    test_sell_button = button((RED), 2, 150, 250, 100)
 
     # Inventory
-    item_inventory = inventory((0, 0, 0), 1000, 2, 278, 716, 1000, 4, 1150, 4, "Inventory", f'Debug Item: {debug_item_amount}', f'Price: {debug_item_price}')
+    item_inventory = inventory((BLACK), 1000, 2, 278, 400, 100, 100, 200, 400, "Inventory")
+
+    # Inventory buttons
+    debug_item_button = inventory_button((BLACK), 1000, 2, 278, 20, 1000, 4, 1150, 4, f'Debug Item: {debug_item_amount}', f'Price: {debug_item_price}')
+    wood_item_button = inventory_button((BLACK), 1000, 22, 278, 20, 1000, 24, 1150, 24, f'Wood Item: {wood_item_amount}', f'Price: {wood_item_price}')
 
     # Variable for game loop
     running = True
@@ -137,17 +165,32 @@ def run_game():
                 if test_quest_button.is_over(mouse_pos):
                     debug_item_amount += random.randint(1, 6)
                     debug_item_price += debug_item_amount * 10
+
+                    wood_item_amount += random.randint(1, 3)
+                    wood_item_price += wood_item_amount * 4
+
                     screen.fill((BLACK))
                 elif test_sell_button.is_over(mouse_pos):
                     debug_item_amount -= debug_item_amount
                     debug_item_price -= debug_item_price
+                elif debug_item_button.is_over(mouse_pos) and debug_item_amount >= 1:
+                    print("Terve")
+                    item_inventory.draw_item_display(screen, (BLUE))
+                elif wood_item_button.is_over(mouse_pos) and wood_item_amount >= 1:
+                    print("Wood")
+                    item_inventory.draw_item_display(screen, (BLUE))
 
-        test_quest_button.draw(screen, (0, 0, 0))
-        test_sell_button.draw(screen, (0, 0, 0))
-        item_inventory.draw(screen,(0, 255, 255))
+        test_quest_button.draw(screen, (BLACK))
+        test_sell_button.draw(screen, (BLACK))
+        item_inventory.draw(screen,(CYAN))
+
+        debug_item_button.draw(screen, (BLACK))
+        wood_item_button.draw(screen, (BLACK))
 
         if debug_item_amount >= 1:
-            item_inventory.draw_inventory_text(screen, f'Debug item: {debug_item_amount}', f'Price: {debug_item_price}')
+            debug_item_button.draw_inventory_text(screen, f'Debug Item: {debug_item_amount}', f'Price: {debug_item_price}')
+        if wood_item_amount >= 1:
+            wood_item_button.draw_inventory_text(screen, f'Wood Item: {wood_item_amount}', f'Price: {wood_item_price}')
 
         pygame.display.update()
 
