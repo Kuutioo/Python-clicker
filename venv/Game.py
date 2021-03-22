@@ -11,6 +11,15 @@ FPS = 30
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 
+# Constants for basic colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+CYAN = (0, 255, 255)
+
+
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # Items
@@ -20,14 +29,6 @@ items = {
     "Stone" : [0, 0],
     "Iron" : [0, 0]
 }
-
-# Colors
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
-CYAN = (0, 255, 255)
 
 
 class button():
@@ -166,6 +167,7 @@ def draw_texts_to_item_display(item_name = "", item_price = ""):
 
 
 # Declare stuff here for global variables
+# Items and amounts
 debug_item_amount = items["Debug item"][0]
 debug_item_price = items["Debug item"][1]
 wood_item_amount = items["Wood"][0]
@@ -185,6 +187,7 @@ wood_item_button = inventory_button((BLACK), 1000, 22, 278, 20, 1000, 24, 1150, 
 
 
 def run_game():
+    # Items and amounts
     global debug_item_amount
     global debug_item_price
     global wood_item_amount
@@ -260,11 +263,12 @@ def run_game():
         if debug_item_amount >= 1:
             debug_item_button.draw_inventory_text(screen, f'Debug Item: {debug_item_amount}', f'Price: {debug_item_price}')
         if wood_item_amount >= 1:
-            wood_item_button.draw_inventory_text(screen, f'Wood Item: {wood_item_amount}', f'Price: {wood_item_price}')
+            wood_item_button.draw_inventory_text(screen, f'Wood: {wood_item_amount}', f'Price: {wood_item_price}')
 
         pygame.display.update()
 
         clock.tick(FPS)
+
 
 def terminate():
     pygame.quit()
