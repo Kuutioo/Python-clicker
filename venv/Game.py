@@ -3,8 +3,10 @@ import random
 import sys
 from pygame.locals import *
 
+# Initialize game
 pygame.init()
 
+# FPS
 FPS = 30
 
 # Constants for screen width and height
@@ -142,7 +144,7 @@ class inventory_button():
 
 
 def main():
-    # Make screen
+    # Fill screen
     screen.fill((BLACK))
 
     # Set a caption
@@ -216,11 +218,16 @@ def run_game():
 
         # Check for events
         for event in pygame.event.get():
+            # User pressed a key?
             if event.type == KEYDOWN:
+                # If the key is escape
                 if event.key == K_ESCAPE:
+                    # Shutdown the program
                     running = False
                     terminate()
+            # User hit the cross in top right corner
             elif event.type == QUIT:
+                # Shutdown the program
                 running == False
                 terminate()
 
@@ -270,6 +277,7 @@ def run_game():
         clock.tick(FPS)
 
 
+# Function to shutdown the program
 def terminate():
     pygame.quit()
     sys.exit()
