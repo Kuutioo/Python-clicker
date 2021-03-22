@@ -19,7 +19,7 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 CYAN = (0, 255, 255)
 
-
+# Screen
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # Items
