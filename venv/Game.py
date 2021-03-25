@@ -333,11 +333,11 @@ jack_of_all_trades_cost = shop_items["Jack of all trades"]
 
 
 # Gold
-gold_amount = 0
+gold_amount = 50000
 gold_display = Gold((BLACK), 748, 600, 250, 115, 752, 637)
 
 # Level
-level = 0
+level = 100
 xp_to_next_level = 100
 level_display = Level((BLACK), 495, 600, 250, 115, 498, 610, 498, 670)
 
@@ -350,7 +350,9 @@ quest_timer_box = QuestTimerBox((BLACK), 748, 494, 250, 103)
 # Buttons
 # Quest buttons
 quest_button = Button((BLACK), 10, 10, 250, 100, 40, "CHOP WOOD")
-quest_button_2 = Button((BLACK), 270, 10, 250, 100, 40, "MINE ORES", "LEVEL 5 REQUIRED")
+quest_button_2 = Button((BLACK), 375, 10, 250, 100, 40, "MINE ORES", "LEVEL 3 REQUIRED")
+quest_button_3 = Button((BLACK), 740, 10, 250, 100, 40, "GO HUNTING", "LEVEL 5 REQUIRED")
+quest_button_4 = Button((BLACK), 10, 190, 250, 100, 40, "GO FISHING", "LEVEL 8 REQUIRED")
 
 # Sell button on item display
 sell_button = Button((BLACK), 1014, 600, 250, 100, 40, "SELL")
@@ -381,6 +383,8 @@ TIMER = pygame.USEREVENT + 1
 
 QUEST_1 = pygame.USEREVENT + 2
 QUEST_2 = pygame.USEREVENT + 3
+QUEST_3 = pygame.USEREVENT + 4
+QUEST_4 = pygame.USEREVENT + 5
 
 
 def run_game():
@@ -443,6 +447,13 @@ def run_game():
     global fishermans_rod_item_button
     global jack_of_all_trades_item_button
 
+    global woodmans_axe_bought
+    global miners_pickaxe_bought
+    global hunters_bow_bought
+    global fighters_sword_bought
+    global fishermans_rod_bought
+    global jack_of_all_trades_bought
+
     # Variable for game loop
     running = True
 
@@ -457,6 +468,12 @@ def run_game():
 
     quest_2_timer = 30
     quest_2_timer_text = timer_font.render("00:30", True, (WHITE))
+
+    quest_3_timer = 60
+    quest_3_timer_text = timer_font.render("01:00", True, (WHITE))
+
+    quest_4_timer = 120
+    quest_4_timer_text = timer_font.render("02:00", True, (WHITE))
 
     # Boolean to items to sell
     sell_debug_item = False
@@ -504,7 +521,7 @@ def run_game():
             if event.type == TIMER:
                 if current_timer > 0:
                     current_timer -= 1
-                    current_timer_text = timer_box_font.render("00:%02d" % current_timer, True, (WHITE))
+                    current_timer_text = timer_box_font.render("%02d" % current_timer, True, (WHITE))
                 else:
                     pygame.time.set_timer(TIMER, 0)
                     current_timer = 0
@@ -514,8 +531,16 @@ def run_game():
 
 
             if event.type == QUEST_1:
-                wood_item_amount, wood_item_price = quest_reward(rand_amount, wood_item_amount, wood_item_price, 4, 1, 3)
-                rand_amount = 0
+                if woodmans_axe_bought == True:
+                    if jack_of_all_trades_bought == True:
+                        wood_item_amount, wood_item_price = quest_reward(rand_amount, wood_item_amount, wood_item_price, 4, 6, 9)
+                        rand_amount = 0
+                    else:
+                        wood_item_amount, wood_item_price = quest_reward(rand_amount, wood_item_amount, wood_item_price, 4, 3, 4)
+                        rand_amount = 0
+                else:
+                    wood_item_amount, wood_item_price = quest_reward(rand_amount, wood_item_amount, wood_item_price, 4, 1, 3)
+                    rand_amount = 0
 
                 xp_to_next_level -= random.randint(8, 12)
 
@@ -524,21 +549,72 @@ def run_game():
                 clicked = False
 
                 quest_1_timer = 10
-
-
             elif event.type == QUEST_2:
-                stone_item_amount, stone_item_price = quest_reward(rand_amount, stone_item_amount, stone_item_price, 2, 2, 5)
-                rand_amount = 0
-
-                iron_item_amount, iron_item_price = quest_reward(rand_amount, iron_item_amount, iron_item_price, 8, 1, 2)
-                rand_amount = 0
+                if miners_pickaxe_bought == True:
+                    if jack_of_all_trades_bought == True:
+                        stone_item_amount, stone_item_price = quest_reward(rand_amount, stone_item_amount, stone_item_price, 2, 8, 12)
+                        rand_amount = 0
+                        iron_item_amount, iron_item_price = quest_reward(rand_amount, iron_item_amount, iron_item_price, 8, 5, 7)
+                        rand_amount = 0
+                    else:
+                        stone_item_amount, stone_item_price = quest_reward(rand_amount, stone_item_amount, stone_item_price, 2, 5, 8)
+                        rand_amount = 0
+                        iron_item_amount, iron_item_price = quest_reward(rand_amount, iron_item_amount, iron_item_price, 8, 3, 4)
+                        rand_amount = 0
+                else:
+                    stone_item_amount, stone_item_price = quest_reward(rand_amount, stone_item_amount, stone_item_price, 2, 2, 5)
+                    rand_amount = 0
+                    iron_item_amount, iron_item_price = quest_reward(rand_amount, iron_item_amount, iron_item_price, 8, 1, 2)
+                    rand_amount = 0
 
                 xp_to_next_level -= random.randint(16, 23)
 
                 pygame.time.set_timer(QUEST_2, 0)
-
                 clicked = False
 
+                quest_2_timer = 30
+            elif event.type == QUEST_3:
+                if fighters_sword_bought == True:
+                    if jack_of_all_trades_bought == True:
+                        bear_flesh_item_amount, bear_flesh_item_price = quest_reward(rand_amount, bear_flesh_item_amount, bear_flesh_item_price, 16, 4, 6)
+                        rand_amount = 0
+                        bear_skin_item_amount, bear_skin_item_price = quest_reward(rand_amount, bear_skin_item_amount, bear_skin_item_price, 10, 4, 6)
+                        rand_amount = 0
+                    else:
+                        bear_flesh_item_amount, bear_flesh_item_price = quest_reward(rand_amount, bear_flesh_item_amount, bear_flesh_item_price, 16, 2, 4)
+                        rand_amount = 0
+                        bear_skin_item_amount, bear_skin_item_price = quest_reward(rand_amount, bear_skin_item_amount, bear_skin_item_price, 10, 2, 4)
+                        rand_amount = 0
+                else:
+                    bear_flesh_item_amount, bear_flesh_item_price = quest_reward(rand_amount, bear_flesh_item_amount, bear_flesh_item_price, 16, 1, 2)
+                    rand_amount = 0
+                    bear_skin_item_amount, bear_skin_item_price = quest_reward(rand_amount, bear_skin_item_amount, bear_skin_item_price, 10, 1, 2)
+                    rand_amount = 0
+
+                xp_to_next_level -= random.randint(29, 36)
+
+                pygame.time.set_timer(QUEST_3, 0)
+                clicked = False
+
+                quest_3_timer = 60
+            elif event.type == QUEST_4:
+                if fishermans_rod_bought == True:
+                    if jack_of_all_trades_bought == True:
+                        fish_item_amount, fish_item_price = quest_reward(rand_amount, fish_item_amount, fish_item_price, 21, 6, 7)
+                        rand_amount = 0
+                    else:
+                        fish_item_amount, fish_item_price = quest_reward(rand_amount, fish_item_amount, fish_item_price, 21, 3, 4)
+                        rand_amount = 0
+                else:
+                    fish_item_amount, fish_item_price = quest_reward(rand_amount, fish_item_amount, fish_item_price, 21, 1, 2)
+                    rand_amount = 0
+
+                xp_to_next_level -= random.randint(48, 54)
+
+                pygame.time.set_timer(QUEST_4, 0)
+                clicked = False
+
+                quest_4_timer = 120
 
             # If mousebutton down
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -547,10 +623,9 @@ def run_game():
                     shop()
                 if quest_button.is_over(mouse_pos) and clicked == False:
                     clicked = True
-                    print(woodmans_axe_bought)
                     if woodmans_axe_bought == True:
                         quest_1_timer -= 2
-                        quest_1_timer_text = timer_font.render("00:08", True, (WHITE))
+                        quest_1_timer_text = timer_font.render("08", True, (WHITE))
 
                         current_timer = quest_1_timer
                         current_timer_text = quest_1_timer_text
@@ -558,22 +633,65 @@ def run_game():
                         pygame.time.set_timer(QUEST_1, 8000)
                         pygame.time.set_timer(TIMER, 1000)
                     else:
-                        quest_1_timer_text = timer_font.render("00:10", True, (WHITE))
+                        quest_1_timer_text = timer_font.render("10", True, (WHITE))
                         current_timer = quest_1_timer
                         current_timer_text = quest_1_timer_text
 
                         pygame.time.set_timer(QUEST_1, 10000)
                         pygame.time.set_timer(TIMER, 1000)
 
-                elif quest_button_2.is_over(mouse_pos) and clicked == False and level >= 5:
+                elif quest_button_2.is_over(mouse_pos) and clicked == False and level >= 3:
                     clicked = True
+                    if miners_pickaxe_bought == True:
+                        quest_2_timer -= 5
+                        quest_2_timer_text = timer_font.render("25", True, (WHITE))
+                        current_timer = quest_2_timer
+                        current_timer_text = quest_2_timer_text
 
-                    quest_2_timer_text = timer_font.render("00:30", True, (WHITE))
-                    current_timer = quest_2_timer
-                    current_timer_text = quest_2_timer_text
+                        pygame.time.set_timer(QUEST_2, 25000)
+                        pygame.time.set_timer(TIMER, 1000)
+                    else:
+                        quest_2_timer_text = timer_font.render("30", True, (WHITE))
+                        current_timer = quest_2_timer
+                        current_timer_text = quest_2_timer_text
 
-                    pygame.time.set_timer(QUEST_2, 30000)
-                    pygame.time.set_timer(TIMER, 1000)
+                        pygame.time.set_timer(QUEST_2, 30000)
+                        pygame.time.set_timer(TIMER, 1000)
+                elif quest_button_3.is_over(mouse_pos) and clicked == False and level >= 5:
+                    clicked = True
+                    if hunters_bow_bought == True:
+                        quest_3_timer -= 15
+                        quest_3_timer_text = timer_font.render("45", True, (WHITE))
+                        current_timer = quest_3_timer
+                        current_timer_text = quest_3_timer_text
+
+                        pygame.time.set_timer(QUEST_3, 45000)
+                        pygame.time.set_timer(TIMER, 1000)
+                    else:
+                        quest_3_timer_text = timer_font.render("60", True, (WHITE))
+                        current_timer = quest_3_timer
+                        current_timer_text = quest_3_timer_text
+
+                        pygame.time.set_timer(QUEST_3, 60000)
+                        pygame.time.set_timer(TIMER, 1000)
+                elif quest_button_4.is_over(mouse_pos) and clicked == False and level >= 8:
+                    clicked = True
+                    if fishermans_rod_bought == True:
+                        quest_4_timer -= 30
+                        quest_4_timer_text = timer_font.render("90", True, (WHITE))
+                        current_timer = quest_4_timer
+                        current_timer_text = quest_4_timer_text
+
+                        pygame.time.set_timer(QUEST_4, 90000)
+                        pygame.time.set_timer(TIMER, 1000)
+                    else:
+                        quest_4_timer_text = timer_font.render("120", True, (WHITE))
+                        current_timer = quest_4_timer
+                        current_timer_text = quest_4_timer_text
+
+                        pygame.time.set_timer(QUEST_4, 120000)
+                        pygame.time.set_timer(TIMER, 1000)
+
 
 
                 # Check if player pressed the sell button
@@ -601,21 +719,27 @@ def run_game():
                         sell_fish = False
                     elif sell_woodmans_axe == True:
                         woodmans_axe_amount, woodmans_axe_price = sell_item(woodmans_axe_amount, woodmans_axe_price)
+                        woodmans_axe_bought = False
                         sell_woodmans_axe = False
                     elif sell_miners_pickaxe == True:
                         miners_pickaxe_amount, miners_pickaxe_price = sell_item(miners_pickaxe_amount, miners_pickaxe_price)
+                        miners_pickaxe_bought = False
                         sell_miners_pickaxe = False
                     elif sell_hunters_bow == True:
                         hunters_bow_amount, hunters_bow_price = sell_item(hunters_bow_amount, hunters_bow_price)
+                        hunters_bow_bought = False
                         sell_hunters_bow = False
                     elif sell_fighters_sword == True:
                         fighters_sword_amount, fighters_sword_price = sell_item(fighters_sword_amount, fighters_sword_price)
+                        fighters_sword_bought = False
                         sell_fighters_sword = False
                     elif sell_fishermans_rod == True:
                         fishermans_rod_amount, fishermans_rod_price = sell_item(fishermans_rod_amount, fishermans_rod_price)
+                        fishermans_rod_bought = False
                         sell_fishermans_rod = False
                     elif sell_jack_of_all_trades == True:
                         jack_of_all_trades_amount, jack_of_all_trades_price = sell_item(jack_of_all_trades_amount, jack_of_all_trades_price)
+                        jack_of_all_trades_bought = False
                         sell_jack_of_all_trades = False
                     item_inventory_display.draw(screen, (CYAN))
 
@@ -668,10 +792,22 @@ def run_game():
 
 
         quest_button_2.draw(screen, (CYAN))
-        if level < 5:
+        if level < 3:
             quest_button_2.draw_locked_text(screen)
         else:
             quest_button_2.draw_text(screen)
+
+        quest_button_3.draw(screen, (CYAN))
+        if level < 5:
+            quest_button_3.draw_locked_text(screen)
+        else:
+            quest_button_3.draw_text(screen)
+
+        quest_button_4.draw(screen, (CYAN))
+        if level < 8:
+            quest_button_4.draw_locked_text(screen)
+        else:
+            quest_button_4.draw_text(screen)
 
 
         # Draw inventory
@@ -717,9 +853,11 @@ def run_game():
         # Draw timers to butons
         if current_timer_text == None:
             screen.blit(quest_1_timer_text, (100, 15))
-            screen.blit(quest_2_timer_text, (360, 15))
+            screen.blit(quest_2_timer_text, (465, 15))
+            screen.blit(quest_3_timer_text, (832, 15))
+            screen.blit(quest_4_timer_text, (100, 195))
         else:
-            screen.blit(current_timer_text, (825, 525))
+            screen.blit(current_timer_text, (840, 525))
 
         # Draw texts to inventory
         if debug_item_amount >= 1:
