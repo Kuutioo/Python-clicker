@@ -651,7 +651,7 @@ def run_game():
                         pygame.time.set_timer(QUEST_1, 10000)
                         pygame.time.set_timer(TIMER, 1000)
 
-                elif quest_button_2.is_over(mouse_pos) and clicked == False and level >= 3:
+                elif quest_button_2.is_over(mouse_pos) and clicked == False and player_attributes["Level"] >= 3:
                     clicked = True
                     if miners_pickaxe_bought == True:
                         quest_2_timer -= 15
@@ -668,7 +668,7 @@ def run_game():
 
                         pygame.time.set_timer(QUEST_2, 30000)
                         pygame.time.set_timer(TIMER, 1000)
-                elif quest_button_3.is_over(mouse_pos) and clicked == False and level >= 5:
+                elif quest_button_3.is_over(mouse_pos) and clicked == False and player_attributes["Level"] >= 5:
                     clicked = True
                     if hunters_bow_bought == True:
                         quest_3_timer -= 30
@@ -685,7 +685,7 @@ def run_game():
 
                         pygame.time.set_timer(QUEST_3, 60000)
                         pygame.time.set_timer(TIMER, 1000)
-                elif quest_button_4.is_over(mouse_pos) and clicked == False and level >= 8:
+                elif quest_button_4.is_over(mouse_pos) and clicked == False and player_attributes["Level"] >= 8:
                     clicked = True
                     if fishermans_rod_bought == True:
                         quest_4_timer -= 60
@@ -708,7 +708,7 @@ def run_game():
                 # Check if player pressed the sell button
                 if sell_button.is_over(mouse_pos):
                     if sell_debug_item == True:
-                        debug_item_amount, debug_item_price = sell_item(debug_item_amount, debug_item_price)
+                        items["Debug item"][0], items["Debug item"][1] = sell_item(items["Debug item"][0], items["Debug item"][1])
                         sell_debug_item = False
                     elif sell_wood == True:
                         items["Wood"][0], items["Wood"][1] = sell_item(items["Wood"][0], items["Wood"][1])
@@ -1072,7 +1072,7 @@ def shop():
                         fishermans_rod_bought = True
                         rand_amount = 0
                         fishermans_rod_clicked = False
-                    elif jack_of_all_trades_clicked == True and level >= 10:
+                    elif jack_of_all_trades_clicked == True and player_attributes["Level"] >= 10:
                         player_attributes["Gold"] -= 10000
                         items["Jack of all trades"][0], items["Jack of all trades"][1] = quest_reward(rand_amount, items["Jack of all trades"][0], items["Jack of all trades"][1], 8000, 1, 1)
                         jack_of_all_trades_bought = True
@@ -1097,13 +1097,13 @@ def shop():
             draw_buy_box("Fighters Sword", f'Price: {shop_items["Fighters sword"]}', "Get more items when hunting and receive more xp")
         elif fishermans_rod_clicked == True:
             draw_buy_box("Fishermans Rod", f'Price: {shop_items["Fishermans rod"]}', "Reduces fishing time, get more fish and receive more xp")
-        elif jack_of_all_trades_clicked == True and level >= 10:
+        elif jack_of_all_trades_clicked == True and player_attributes["Level"] >= 10:
             draw_buy_box("Jack Of All Trades", f'Price: {shop_items["Jack of all trades"]}', "Get more items from quest and receive more xp")
-        elif jack_of_all_trades_clicked == True and level <= 10:
+        elif jack_of_all_trades_clicked == True and player_attributes["Level"] <= 10:
             buy_box_display.draw(screen, (CYAN))
             buy_box_display.draw_item_name(screen, "Jack Of All Trades")
             buy_box_display.draw_item_price(screen, f'Price: {shop_items["Jack of all trades"]}')
-            buy_box_display.draw_item_info(screen, "Reduces all quest times and get more items")
+            buy_box_display.draw_item_info(screen, "Get more items from quests and get more xp from quests")
             buy_button.draw(screen, (CYAN))
             buy_button.draw_locked_text(screen)
 
