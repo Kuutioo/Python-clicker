@@ -2,6 +2,7 @@ import pygame
 import random
 import sys
 import time
+import json
 from pygame.locals import *
 
 # Initialize game
@@ -34,22 +35,37 @@ items = {
     "Bear flesh" : [0, 0],
     "Bear skin" : [0, 0],
     "Fish" : [0, 0],
-    "Woodman's axe" : [0, 0],
-    "Miner's pickaxe" : [0, 0],
-    "Hunter's bow" : [0, 0],
-    "Fighter's sword" : [0, 0],
-    "Fisherman's rod" : [0, 0],
+    "Woodmans axe" : [0, 0],
+    "Miners pickaxe" : [0, 0],
+    "Hunters bow" : [0, 0],
+    "Fighters sword" : [0, 0],
+    "Fishermans rod" : [0, 0],
     "Jack of all trades" : [0, 0]
 }
 
+player_attributes = {
+    "Gold" : 0,
+    "Level" : 0,
+    "Xp to next level" : 100,
+    "Current xp to next level" : 0
+}
+
 shop_items = {
-    "Woodman's axe" : 70,
-    "Miner's pickaxe" : 320,
-    "Hunter's bow" : 900,
-    "Fighter's sword" : 2500,
-    "Fisherman's rod" : 5300,
+    "Woodmans axe" : 70,
+    "Miners pickaxe" : 320,
+    "Hunters bow" : 900,
+    "Fighters sword" : 2500,
+    "Fishermans rod" : 5300,
     "Jack of all trades" : 10000
 }
+
+try:
+    with open("Game_data.txt") as score_file:
+        items = json.load(score_file)
+    with open("Player_data.txt") as player_file:
+        player_attributes = json.load(player_file)
+except:
+    print("No file yet created")
 
 
 class Button():
@@ -236,6 +252,8 @@ class Shop():
 
         pygame.draw.rect(screen, self.color, (self.x, self.y, self.width, self.height), 0)
 
+
+
 class QuestTimerBox():
     def __init__(self, color, x, y, width, height):
         self.color = color
@@ -248,7 +266,43 @@ class QuestTimerBox():
         if outline:
             pygame.draw.rect(screen, outline, (self.x - 2, self.y - 2, self.width + 4, self.height + 4), 0)
 
-        pygame.draw.rect(screen, self.color, (self.x, self.y, self.width, self.height),0)
+        pygame.draw.rect(screen, self.color, (self.x, self.y, self.width, self.height), 0)
+
+
+class BuyBox():
+    def __init__(self, color, x, y, width, height, item_name_x, item_name_y, item_price_x, item_price_y, item_info_x, item_info_y):
+        self.color = color
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.item_name_x = item_name_x
+        self.item_name_y = item_name_y
+        self.item_price_x = item_price_x
+        self.item_price_y = item_price_y
+        self.item_info_x = item_info_x
+        self.item_info_y = item_info_y
+
+    def draw(self, screen, outline = None):
+        if outline:
+            pygame.draw.rect(screen, outline, (self.x - 2, self.y - 2, self.width + 4, self.height + 4), 0)
+
+        pygame.draw.rect(screen, self.color, (self.x, self.y, self.width, self.height), 0)
+
+    def draw_item_name(self, screen, _item_name=""):
+        font = pygame.font.Font(None, 50)
+        text = font.render(_item_name, True, (WHITE))
+        screen.blit(text, (self.item_name_x, self.item_name_y))
+
+    def draw_item_price(self, screen, _item_price=""):
+        font = pygame.font.Font(None, 50)
+        text = font.render(_item_price, True, (WHITE))
+        screen.blit(text, (self.item_price_x, self.item_price_y))
+
+    def draw_item_info(self, screen, _item_info=""):
+        font = pygame.font.Font(None, 30)
+        text = font.render(_item_info, True, (WHITE))
+        screen.blit(text, (self.item_info_x, self.item_info_y))
 
 
 def main():
@@ -284,10 +338,9 @@ def quest_reward(rand_num, item_amount, item_price, item_price_int, rand_int_1, 
 
 
 def sell_item(item_amount, item_price):
-    global gold_amount
 
-    gold_amount += item_price
-    gold_display.draw_text(screen, f'Gold: {gold_amount}')
+    player_attributes["Gold"] += item_price
+    gold_display.draw_text(screen, f'Gold: {player_attributes["Gold"]}')
     item_amount -= item_amount
     item_price -= item_price
 
@@ -296,49 +349,11 @@ def sell_item(item_amount, item_price):
 
 # Declare stuff here for global variables
 # Items and amounts
-debug_item_amount = items["Debug item"][0]
-debug_item_price = items["Debug item"][1]
-wood_item_amount = items["Wood"][0]
-wood_item_price = items["Wood"][1]
-stone_item_amount = items["Stone"][0]
-stone_item_price = items["Stone"][1]
-iron_item_amount = items["Iron"][0]
-iron_item_price = items["Iron"][1]
-bear_flesh_item_amount = items["Bear flesh"][0]
-bear_flesh_item_price = items["Bear flesh"][1]
-bear_skin_item_amount = items["Bear skin"][0]
-bear_skin_item_price = items["Bear skin"][1]
-fish_item_amount = items["Fish"][0]
-fish_item_price = items["Fish"][1]
-woodmans_axe_amount = items["Woodman's axe"][0]
-woodmans_axe_price = items["Woodman's axe"][1]
-miners_pickaxe_amount = items["Miner's pickaxe"][0]
-miners_pickaxe_price = items["Miner's pickaxe"][1]
-hunters_bow_amount = items["Hunter's bow"][0]
-hunters_bow_price = items["Hunter's bow"][1]
-fighters_sword_amount = items["Fighter's sword"][0]
-fighters_sword_price = items["Fighter's sword"][1]
-fishermans_rod_amount = items["Fisherman's rod"][0]
-fishermans_rod_price = items["Fisherman's rod"][1]
-jack_of_all_trades_amount = items["Jack of all trades"][0]
-jack_of_all_trades_price = items["Jack of all trades"][1]
-
-# Shop items
-woodmans_axe_cost = shop_items["Woodman's axe"]
-miners_pickaxe_cost = shop_items["Miner's pickaxe"]
-hunters_bow_cost = shop_items["Hunter's bow"]
-fighters_sword_cost = shop_items["Fighter's sword"]
-fishermans_rod_cost = shop_items["Fisherman's rod"]
-jack_of_all_trades_cost = shop_items["Jack of all trades"]
-
 
 # Gold
-gold_amount = 50000
 gold_display = Gold((BLACK), 748, 600, 250, 115, 752, 637)
 
 # Level
-level = 100
-xp_to_next_level = 100
 level_display = Level((BLACK), 495, 600, 250, 115, 498, 610, 498, 670)
 
 # Inventory
@@ -362,19 +377,19 @@ shop_button = Button((BLACK), 2, 600, 490, 115, 60, "SHOP")
 
 # Inventory buttons
 # Normal items
-debug_item_button = InventoryButton((BLACK), 1000, 2, 278, 20, 1002, 4, 1150, 4, f'Debug Item: {debug_item_amount}', f'Price: {debug_item_price}')
-wood_item_button = InventoryButton((BLACK), 1000, 22, 278, 20, 1002, 24, 1150, 24, f'Wood: {wood_item_amount}', f'Price: {wood_item_price}')
-stone_item_button = InventoryButton((BLACK), 1000, 42, 278, 20, 1002, 44, 1150, 44, f'Stone: {stone_item_amount}', f'Price: {stone_item_price}')
-iron_item_button = InventoryButton((BLACK), 1000, 62, 278, 20, 1002, 64, 1150, 64, f'Iron: {iron_item_amount}', f'Price: {iron_item_price}')
-bear_flesh_item_button = InventoryButton((BLACK), 1000, 82, 278, 20, 1002, 84, 1150, 84, f'Bear Flesh: {bear_flesh_item_amount}', f'Price: {bear_flesh_item_price}')
-bear_skin_item_button = InventoryButton((BLACK), 1000, 102, 278, 20, 1002, 104, 1150, 104, f'Bear Skin: {bear_skin_item_amount}', f'Price: {bear_skin_item_price}')
-fish_item_button = InventoryButton((BLACK), 1000, 122, 278, 20, 1002, 124, 1150, 124, f'Fish: {fish_item_amount}', f'Price: {fish_item_price}')
-woodmans_axe_item_button = InventoryButton((BLACK), 1000, 142, 278, 20, 1002, 144, 1160, 144, f"Woodman's Axe: {woodmans_axe_amount}", f"Price: {woodmans_axe_price}")
-miners_pickaxe_item_button = InventoryButton((BLACK), 1000, 162, 278, 20, 1002, 164, 1170, 164, f"Miner's Pickaxe: {miners_pickaxe_amount}", f'Price: {miners_pickaxe_price}')
-hunters_bow_item_button = InventoryButton((BLACK), 1000, 182, 278, 20, 1002, 184, 1150, 184, f"Hunter's Bow: {hunters_bow_amount}", f'Price: {hunters_bow_price}')
-fighters_sword_item_button = InventoryButton((BLACK), 1000, 202, 278, 20, 1002, 204, 1170, 204, f"Fighter's Sword: {fighters_sword_amount}", f'Price: {fighters_sword_price}')
-fishermans_rod_item_button = InventoryButton((BLACK), 1000, 222, 278, 20, 1002, 224, 1180, 224, f"Fisherman's Rod: {fishermans_rod_amount}", f'Price: {fishermans_rod_price}')
-jack_of_all_trades_item_button = InventoryButton((BLACK), 1000, 242, 278, 20, 1002, 244, 1180, 244, f"Jack Of All Trades: {jack_of_all_trades_amount}", f'Price: {jack_of_all_trades_price}')
+debug_item_button = InventoryButton((BLACK), 1000, 2, 278, 20, 1002, 4, 1150, 4, f'Debug Item: {items["Debug item"][0]}', f'Price: {items["Debug item"][1]}')
+wood_item_button = InventoryButton((BLACK), 1000, 22, 278, 20, 1002, 24, 1150, 24, f'Wood: {items["Wood"][0]}', f'Price: {items["Wood"][1]}')
+stone_item_button = InventoryButton((BLACK), 1000, 42, 278, 20, 1002, 44, 1150, 44, f'Stone: {items["Stone"][0]}', f'Price: {items["Stone"][1]}')
+iron_item_button = InventoryButton((BLACK), 1000, 62, 278, 20, 1002, 64, 1150, 64, f'Iron: {items["Iron"][0]}', f'Price: {items["Iron"][1]}')
+bear_flesh_item_button = InventoryButton((BLACK), 1000, 82, 278, 20, 1002, 84, 1150, 84, f'Bear Flesh: {items["Bear flesh"][0]}', f'Price: {items["Bear flesh"][1]}')
+bear_skin_item_button = InventoryButton((BLACK), 1000, 102, 278, 20, 1002, 104, 1150, 104, f'Bear Skin: {items["Bear skin"][0]}', f'Price: {items["Bear skin"][1]}')
+fish_item_button = InventoryButton((BLACK), 1000, 122, 278, 20, 1002, 124, 1150, 124, f'Fish: {items["Fish"][0]}', f'Price: {items["Wood"][1]}')
+woodmans_axe_item_button = InventoryButton((BLACK), 1000, 142, 278, 20, 1002, 144, 1160, 144, f'Woodmans axe: {items["Woodmans axe"][0]}', f'Price: {items["Woodmans axe"][1]}')
+miners_pickaxe_item_button = InventoryButton((BLACK), 1000, 162, 278, 20, 1002, 164, 1170, 164, f'Miners pickaxe: {items["Miners pickaxe"][0]}', f'Price: {items["Miners pickaxe"][1]}')
+hunters_bow_item_button = InventoryButton((BLACK), 1000, 182, 278, 20, 1002, 184, 1150, 184, f'Hunters Bow: {items["Hunters bow"][0]}', f'Price: {items["Hunters bow"][1]}')
+fighters_sword_item_button = InventoryButton((BLACK), 1000, 202, 278, 20, 1002, 204, 1170, 204, f'Fighters Sword: {items["Fighters sword"][0]}', f'Price: {items["Fighters sword"][1]}')
+fishermans_rod_item_button = InventoryButton((BLACK), 1000, 222, 278, 20, 1002, 224, 1180, 224, f'Fishermans Rod: {items["Fishermans rod"][0]}', f'Price: {items["Fishermans rod"][1]}')
+jack_of_all_trades_item_button = InventoryButton((BLACK), 1000, 242, 278, 20, 1002, 244, 1180, 244, f'Jack Of All Trades: {items["Jack of all trades"][0]}', f'Price: {items["Jack of all trades"][1]}')
 
 clock = pygame.time.Clock()
 
@@ -386,6 +401,7 @@ QUEST_2 = pygame.USEREVENT + 3
 QUEST_3 = pygame.USEREVENT + 4
 QUEST_4 = pygame.USEREVENT + 5
 
+# player_attributes["Current xp to next level"] = player_attributes["Xp to next level"]
 
 def run_game():
     screen.fill((BLACK))
@@ -394,30 +410,6 @@ def run_game():
     # Items and amounts
     global debug_item_amount
     global debug_item_price
-    global wood_item_amount
-    global wood_item_price
-    global stone_item_amount
-    global stone_item_price
-    global iron_item_amount
-    global iron_item_price
-    global bear_flesh_item_amount
-    global bear_flesh_item_price
-    global bear_skin_item_amount
-    global bear_skin_item_price
-    global fish_item_amount
-    global fish_item_price
-    global woodmans_axe_amount
-    global woodmans_axe_price
-    global miners_pickaxe_amount
-    global miners_pickaxe_price
-    global hunters_bow_amount
-    global hunters_bow_price
-    global fighters_sword_amount
-    global fighters_sword_price
-    global fishermans_rod_amount
-    global fishermans_rod_price
-    global jack_of_all_trades_amount
-    global jack_of_all_trades_price
 
     # Test buttons
     global quest_button
@@ -428,9 +420,7 @@ def run_game():
     global gold_text
 
     # Level
-    global level
-    global xp_to_next_level
-    current_xp_to_next_level = xp_to_next_level
+    player_attributes["Current xp to next level"] = player_attributes["Xp to next level"]
 
     # Inventory buttons
     global debug_item_button
@@ -464,16 +454,16 @@ def run_game():
     current_timer_text = None
 
     quest_1_timer = 10
-    quest_1_timer_text = timer_font.render("00:10", True, (WHITE))
+    quest_1_timer_text = timer_font.render("10", True, (WHITE))
 
     quest_2_timer = 30
-    quest_2_timer_text = timer_font.render("00:30", True, (WHITE))
+    quest_2_timer_text = timer_font.render("30", True, (WHITE))
 
     quest_3_timer = 60
-    quest_3_timer_text = timer_font.render("01:00", True, (WHITE))
+    quest_3_timer_text = timer_font.render("60", True, (WHITE))
 
     quest_4_timer = 120
-    quest_4_timer_text = timer_font.render("02:00", True, (WHITE))
+    quest_4_timer_text = timer_font.render("120", True, (WHITE))
 
     # Boolean to items to sell
     sell_debug_item = False
@@ -494,7 +484,7 @@ def run_game():
     clicked = False
 
     rand_amount = 0
-    
+
     # clock to tick
     global clock
 
@@ -509,10 +499,19 @@ def run_game():
                 # If the key is escape
                 if event.key == K_ESCAPE:
                     # Shutdown the program
+                    with open ("Game_data.txt", "w") as score_file:
+                        json.dump(items, score_file)
+                    with open("Player_data.txt", "w") as player_file:
+                        json.dump(player_attributes, player_file)
+
                     running = False
                     terminate()
-            # User hit the cross in top right corner
+            # User hit the cross in top rightcorner
             elif event.type == QUIT:
+                with open("Game_data.txt", "w") as score_file:
+                    json.dump(items, score_file)
+                with open("Player_data.txt", "w") as player_file:
+                    json.dump(player_attributes, player_file)
                 # Shutdown the program
                 running == False
                 terminate()
@@ -533,87 +532,99 @@ def run_game():
             if event.type == QUEST_1:
                 if woodmans_axe_bought == True:
                     if jack_of_all_trades_bought == True:
-                        wood_item_amount, wood_item_price = quest_reward(rand_amount, wood_item_amount, wood_item_price, 4, 6, 9)
+                        items["Wood"][0], items["Wood"][1] = quest_reward(rand_amount, items["Wood"][0], items["Wood"][1], 4, 6, 9)
                         rand_amount = 0
+                        player_attributes["Xp to next level"] -= random.randint(15, 20)
                     else:
-                        wood_item_amount, wood_item_price = quest_reward(rand_amount, wood_item_amount, wood_item_price, 4, 3, 4)
+                        items["Wood"][0], items["Wood"][1] = quest_reward(rand_amount, items["Wood"][0], items["Wood"][1], 4, 3, 4)
                         rand_amount = 0
+                        player_attributes["Xp to next level"] -= random.randint(12, 15)
                 else:
-                    wood_item_amount, wood_item_price = quest_reward(rand_amount, wood_item_amount, wood_item_price, 4, 1, 3)
+                    items["Wood"][0], items["Wood"][1] = quest_reward(rand_amount, items["Wood"][0], items["Wood"][1], 4, 1, 3)
                     rand_amount = 0
-
-                xp_to_next_level -= random.randint(8, 12)
+                    player_attributes["Xp to next level"] -= random.randint(8, 12)
 
                 pygame.time.set_timer(QUEST_1, 0)
 
                 clicked = False
-
+                print(items)
                 quest_1_timer = 10
             elif event.type == QUEST_2:
                 if miners_pickaxe_bought == True:
                     if jack_of_all_trades_bought == True:
-                        stone_item_amount, stone_item_price = quest_reward(rand_amount, stone_item_amount, stone_item_price, 2, 8, 12)
+                        items["Stone"][0], items["Stone"][1] = quest_reward(rand_amount, items["Stone"][0], items["Stone"][1], 2, 8, 12)
                         rand_amount = 0
-                        iron_item_amount, iron_item_price = quest_reward(rand_amount, iron_item_amount, iron_item_price, 8, 5, 7)
+                        items["Iron"][0], items["Iron"][1] = quest_reward(rand_amount, items["Iron"][0], items["Iron"][1], 8, 5, 7)
                         rand_amount = 0
+                        player_attributes["Xp to next level"] -= random.randint(27, 34)
                     else:
-                        stone_item_amount, stone_item_price = quest_reward(rand_amount, stone_item_amount, stone_item_price, 2, 5, 8)
+                        items["Stone"][0], items["Stone"][1] = quest_reward(rand_amount, items["Stone"][0], items["Stone"][1], 2, 5, 8)
                         rand_amount = 0
-                        iron_item_amount, iron_item_price = quest_reward(rand_amount, iron_item_amount, iron_item_price, 8, 3, 4)
+                        items["Iron"][0], items["Iron"][1] = quest_reward(rand_amount, items["Iron"][0], items["Iron"][1], 3, 2, 4)
                         rand_amount = 0
+
+                        player_attributes["Xp to next level"] -= random.randint(23, 27)
                 else:
-                    stone_item_amount, stone_item_price = quest_reward(rand_amount, stone_item_amount, stone_item_price, 2, 2, 5)
+                    items["Stone"][0], items["Stone"][1] = quest_reward(rand_amount, items["Stone"][0], items["Stone"][1], 2, 2, 5)
                     rand_amount = 0
-                    iron_item_amount, iron_item_price = quest_reward(rand_amount, iron_item_amount, iron_item_price, 8, 1, 2)
+                    items["Iron"][0], items["Iron"][1] = quest_reward(rand_amount, items["Iron"][0], items["Iron"][1], 3, 1, 2)
                     rand_amount = 0
 
-                xp_to_next_level -= random.randint(16, 23)
+                    player_attributes["Xp to next level"] -= random.randint(16, 23)
 
                 pygame.time.set_timer(QUEST_2, 0)
-                clicked = False
 
+                clicked = False
+                print(items)
                 quest_2_timer = 30
             elif event.type == QUEST_3:
                 if fighters_sword_bought == True:
                     if jack_of_all_trades_bought == True:
-                        bear_flesh_item_amount, bear_flesh_item_price = quest_reward(rand_amount, bear_flesh_item_amount, bear_flesh_item_price, 16, 4, 6)
+                        items["Bear flesh"][0], items["Bear flesh"][1] = quest_reward(rand_amount, items["Bear flesh"][0], items["Bear flesh"][1], 16, 4, 6)
                         rand_amount = 0
-                        bear_skin_item_amount, bear_skin_item_price = quest_reward(rand_amount, bear_skin_item_amount, bear_skin_item_price, 10, 4, 6)
+                        items["Bear skin"][0], items["Bear skin"][1] = quest_reward(rand_amount, items["Bear skin"][0], items["Bear skin"][1], 10, 4, 6)
                         rand_amount = 0
+                        player_attributes["Xp to next level"] -= random.randint(43, 48)
                     else:
-                        bear_flesh_item_amount, bear_flesh_item_price = quest_reward(rand_amount, bear_flesh_item_amount, bear_flesh_item_price, 16, 2, 4)
+                        items["Bear flesh"][0], items["Bear flesh"][1] = quest_reward(rand_amount, items["Bear flesh"][0], items["Bear flesh"][1], 16, 2, 4)
                         rand_amount = 0
-                        bear_skin_item_amount, bear_skin_item_price = quest_reward(rand_amount, bear_skin_item_amount, bear_skin_item_price, 10, 2, 4)
+                        items["Bear skin"][0], items["Bear skin"][1] = quest_reward(rand_amount, items["Bear skin"][0], items["Bear skin"][1], 10, 2, 4)
                         rand_amount = 0
+
+                        player_attributes["Xp to next level"] -= random.randint(36, 43)
                 else:
-                    bear_flesh_item_amount, bear_flesh_item_price = quest_reward(rand_amount, bear_flesh_item_amount, bear_flesh_item_price, 16, 1, 2)
+                    items["Bear flesh"][0], items["Bear flesh"][1] = quest_reward(rand_amount, items["Bear flesh"][0], items["Bear flesh"][1], 16, 1, 2)
                     rand_amount = 0
-                    bear_skin_item_amount, bear_skin_item_price = quest_reward(rand_amount, bear_skin_item_amount, bear_skin_item_price, 10, 1, 2)
+                    items["Bear skin"][0], items["Bear skin"][1] = quest_reward(rand_amount, items["Bear skin"][0], items["Bear skin"][1], 10, 1, 2)
                     rand_amount = 0
 
-                xp_to_next_level -= random.randint(29, 36)
+                    player_attributes["Xp to next level"] -= random.randint(29, 36)
 
                 pygame.time.set_timer(QUEST_3, 0)
                 clicked = False
-
+                print(items)
                 quest_3_timer = 60
             elif event.type == QUEST_4:
                 if fishermans_rod_bought == True:
                     if jack_of_all_trades_bought == True:
-                        fish_item_amount, fish_item_price = quest_reward(rand_amount, fish_item_amount, fish_item_price, 21, 6, 7)
+                        items["Fish"][0], items["Fish"][1] = quest_reward(rand_amount, items["Fish"][0], items["Fish"][1], 21, 6, 7)
                         rand_amount = 0
+
+                        player_attributes["Xp to next level"] -= random.randint(61, 68)
                     else:
-                        fish_item_amount, fish_item_price = quest_reward(rand_amount, fish_item_amount, fish_item_price, 21, 3, 4)
+                        items["Fish"][0], items["Fish"][1] = quest_reward(rand_amount, items["Fish"][0], items["Fish"][1], 21, 3, 4)
                         rand_amount = 0
+
+                        player_attributes["Xp to next level"] -= random.randint(54, 61)
                 else:
-                    fish_item_amount, fish_item_price = quest_reward(rand_amount, fish_item_amount, fish_item_price, 21, 1, 2)
+                    items["Fish"][0], items["Fish"][1] = quest_reward(rand_amount, items["Fish"][0], items["Fish"][1], 21, 1, 2)
                     rand_amount = 0
 
-                xp_to_next_level -= random.randint(48, 54)
+                    player_attributes["Xp to next level"] -= random.randint(48, 54)
 
                 pygame.time.set_timer(QUEST_4, 0)
                 clicked = False
-
+                print(items)
                 quest_4_timer = 120
 
             # If mousebutton down
@@ -624,13 +635,13 @@ def run_game():
                 if quest_button.is_over(mouse_pos) and clicked == False:
                     clicked = True
                     if woodmans_axe_bought == True:
-                        quest_1_timer -= 2
-                        quest_1_timer_text = timer_font.render("08", True, (WHITE))
+                        quest_1_timer -= 5
+                        quest_1_timer_text = timer_font.render("05", True, (WHITE))
 
                         current_timer = quest_1_timer
                         current_timer_text = quest_1_timer_text
 
-                        pygame.time.set_timer(QUEST_1, 8000)
+                        pygame.time.set_timer(QUEST_1, 5000)
                         pygame.time.set_timer(TIMER, 1000)
                     else:
                         quest_1_timer_text = timer_font.render("10", True, (WHITE))
@@ -643,12 +654,12 @@ def run_game():
                 elif quest_button_2.is_over(mouse_pos) and clicked == False and level >= 3:
                     clicked = True
                     if miners_pickaxe_bought == True:
-                        quest_2_timer -= 5
-                        quest_2_timer_text = timer_font.render("25", True, (WHITE))
+                        quest_2_timer -= 15
+                        quest_2_timer_text = timer_font.render("15", True, (WHITE))
                         current_timer = quest_2_timer
                         current_timer_text = quest_2_timer_text
 
-                        pygame.time.set_timer(QUEST_2, 25000)
+                        pygame.time.set_timer(QUEST_2, 15000)
                         pygame.time.set_timer(TIMER, 1000)
                     else:
                         quest_2_timer_text = timer_font.render("30", True, (WHITE))
@@ -660,12 +671,12 @@ def run_game():
                 elif quest_button_3.is_over(mouse_pos) and clicked == False and level >= 5:
                     clicked = True
                     if hunters_bow_bought == True:
-                        quest_3_timer -= 15
-                        quest_3_timer_text = timer_font.render("45", True, (WHITE))
+                        quest_3_timer -= 30
+                        quest_3_timer_text = timer_font.render("30", True, (WHITE))
                         current_timer = quest_3_timer
                         current_timer_text = quest_3_timer_text
 
-                        pygame.time.set_timer(QUEST_3, 45000)
+                        pygame.time.set_timer(QUEST_3, 30000)
                         pygame.time.set_timer(TIMER, 1000)
                     else:
                         quest_3_timer_text = timer_font.render("60", True, (WHITE))
@@ -677,12 +688,12 @@ def run_game():
                 elif quest_button_4.is_over(mouse_pos) and clicked == False and level >= 8:
                     clicked = True
                     if fishermans_rod_bought == True:
-                        quest_4_timer -= 30
-                        quest_4_timer_text = timer_font.render("90", True, (WHITE))
+                        quest_4_timer -= 60
+                        quest_4_timer_text = timer_font.render("60", True, (WHITE))
                         current_timer = quest_4_timer
                         current_timer_text = quest_4_timer_text
 
-                        pygame.time.set_timer(QUEST_4, 90000)
+                        pygame.time.set_timer(QUEST_4, 60000)
                         pygame.time.set_timer(TIMER, 1000)
                     else:
                         quest_4_timer_text = timer_font.render("120", True, (WHITE))
@@ -700,111 +711,111 @@ def run_game():
                         debug_item_amount, debug_item_price = sell_item(debug_item_amount, debug_item_price)
                         sell_debug_item = False
                     elif sell_wood == True:
-                        wood_item_amount, wood_item_price = sell_item(wood_item_amount, wood_item_price)
+                        items["Wood"][0], items["Wood"][1] = sell_item(items["Wood"][0], items["Wood"][1])
                         sell_wood = False
                     elif sell_stone == True:
-                        stone_item_amount, stone_item_price = sell_item(stone_item_amount, stone_item_price)
+                        items["Stone"][0], items["Stone"][1] = sell_item(items["Stone"][0], items["Stone"][1])
                         sell_stone = False
                     elif sell_iron == True:
-                        iron_item_amount, iron_item_price = sell_item(iron_item_amount, iron_item_price)
+                        items["Iron"][0], items["Iron"][1] = sell_item(items["Iron"][0], items["Iron"][1])
                         sell_iron = False
                     elif sell_bear_flesh == True:
-                        bear_flesh_item_amount, bear_flesh_item_price = sell_item(bear_flesh_item_amount, bear_flesh_item_price)
+                        items["Bear flesh"][0], items["Bear flesh"][1] = sell_item(items["Bear flesh"][0], items["Bear flesh"][1])
                         sell_bear_flesh = False
                     elif sell_bear_skin == True:
-                        bear_skin_item_amount, bear_skin_item_price = sell_item(bear_skin_item_amount, bear_skin_item_price)
+                        items["Bear skin"][0], items["Bear skin"][1] = sell_item(items["Bear skin"][0], items["Bear skin"][1])
                         sell_bear_skin = False
                     elif sell_fish == True:
-                        fish_item_amount, fish_item_price = sell_item(fish_item_amount, fish_item_price)
+                        items["Fish"][0], items["Fish"][1] = sell_item(items["Fish"][0], items["Fish"][1])
                         sell_fish = False
                     elif sell_woodmans_axe == True:
-                        woodmans_axe_amount, woodmans_axe_price = sell_item(woodmans_axe_amount, woodmans_axe_price)
+                        items["Woodmans axe"][0], items["Woodmans axe"][1] = sell_item(items["Woodmans axe"][0], items["Woodmans axe"][1])
                         woodmans_axe_bought = False
                         sell_woodmans_axe = False
                     elif sell_miners_pickaxe == True:
-                        miners_pickaxe_amount, miners_pickaxe_price = sell_item(miners_pickaxe_amount, miners_pickaxe_price)
+                        items["Miners pickaxe"][0], items["Miners pickaxe"][1] = sell_item(items["Miners pickaxe"][0], items["Miners pickaxe"][1])
                         miners_pickaxe_bought = False
                         sell_miners_pickaxe = False
                     elif sell_hunters_bow == True:
-                        hunters_bow_amount, hunters_bow_price = sell_item(hunters_bow_amount, hunters_bow_price)
+                        items["Hunters bow"][0], items["Hunters bow"][1] = sell_item(items["Hunters bow"][0], items["Hunters bow"][1])
                         hunters_bow_bought = False
                         sell_hunters_bow = False
                     elif sell_fighters_sword == True:
-                        fighters_sword_amount, fighters_sword_price = sell_item(fighters_sword_amount, fighters_sword_price)
+                        items["Fighters sword"][0], items["Fighters sword"][1] = sell_item(items["Fighters sword"][0], items["Fighters sword"][1])
                         fighters_sword_bought = False
                         sell_fighters_sword = False
                     elif sell_fishermans_rod == True:
-                        fishermans_rod_amount, fishermans_rod_price = sell_item(fishermans_rod_amount, fishermans_rod_price)
+                        items["Fishermans rod"][0], items["Fishermans rod"][1] = sell_item(items["Fishermans rod"][0], items["Fishermans rod"][1])
                         fishermans_rod_bought = False
                         sell_fishermans_rod = False
                     elif sell_jack_of_all_trades == True:
-                        jack_of_all_trades_amount, jack_of_all_trades_price = sell_item(jack_of_all_trades_amount, jack_of_all_trades_price)
+                        items["Jack of all trades"][0], items["Jack of all trades"][1] = sell_item(items["Jack of all trades"][0], items["Jack of all trades"][1])
                         jack_of_all_trades_bought = False
                         sell_jack_of_all_trades = False
                     item_inventory_display.draw(screen, (CYAN))
 
 
                 # Check if player pressed a button/text in the inventory
-                if debug_item_button.is_over(mouse_pos) and debug_item_amount >= 1:
-                    draw_texts_to_item_display("Debug item", f'Price: {debug_item_price}')
+                if debug_item_button.is_over(mouse_pos) and items["Debug item"][0] >= 1:
+                    draw_texts_to_item_display("Debug item", f'Price: {items["Debug item"][1]}')
                     sell_debug_item = True
-                elif wood_item_button.is_over(mouse_pos) and wood_item_amount >= 1:
-                    draw_texts_to_item_display("Wood", f'Price: {wood_item_price}')
+                elif wood_item_button.is_over(mouse_pos) and items["Wood"][0] >= 1:
+                    draw_texts_to_item_display("Wood", f'Price: {items["Wood"][1]}')
                     sell_wood = True
-                elif stone_item_button.is_over(mouse_pos) and stone_item_amount >= 1:
-                    draw_texts_to_item_display("Stone", f'Price: {stone_item_price}')
+                elif stone_item_button.is_over(mouse_pos) and items["Stone"][0] >= 1:
+                    draw_texts_to_item_display("Stone", f'Price: {items["Stone"][1]}')
                     sell_stone = True
-                elif iron_item_button.is_over(mouse_pos) and iron_item_amount >= 1:
-                    draw_texts_to_item_display("Iron", f'Price: {iron_item_price}')
+                elif iron_item_button.is_over(mouse_pos) and items["Iron"][0] >= 1:
+                    draw_texts_to_item_display("Iron", f'Price: {items["Iron"][1]}')
                     sell_iron = True
-                elif bear_flesh_item_button.is_over(mouse_pos) and bear_flesh_item_amount >= 1:
-                    draw_texts_to_item_display("Bear Flesh", f'Price: {bear_flesh_item_price}')
+                elif bear_flesh_item_button.is_over(mouse_pos) and items["Bear flesh"][0] >= 1:
+                    draw_texts_to_item_display("Bear Flesh", f'Price: {items["Bear flesh"][1]}')
                     sell_bear_flesh = True
-                elif bear_skin_item_button.is_over(mouse_pos) and bear_skin_item_amount >= 1:
-                    draw_texts_to_item_display("Bear Skin", f'Price: {bear_skin_item_price}')
+                elif bear_skin_item_button.is_over(mouse_pos) and items["Bear skin"][0] >= 1:
+                    draw_texts_to_item_display("Bear Skin", f'Price: {items["Bear skin"][1]}')
                     sell_bear_skin = True
-                elif fish_item_button.is_over(mouse_pos) and fish_item_amount >= 1:
-                    draw_texts_to_item_display("Fish", f'Price: {fish_item_price}')
+                elif fish_item_button.is_over(mouse_pos) and items["Fish"][0] >= 1:
+                    draw_texts_to_item_display("Fish", f'Price: {items["Fish"][1]}')
                     sell_fish = True
-                elif woodmans_axe_item_button.is_over(mouse_pos) and woodmans_axe_amount >= 1:
-                    draw_texts_to_item_display("Woodman's Axe", f'Price: {woodmans_axe_price}')
+                elif woodmans_axe_item_button.is_over(mouse_pos) and items["Woodman's axe"][0] >= 1:
+                    draw_texts_to_item_display("Woodman's Axe", f'Price: {items["Woodmans axe"][1]}')
                     sell_woodmans_axe = True
-                elif miners_pickaxe_item_button.is_over(mouse_pos) and miners_pickaxe_amount >= 1:
-                    draw_texts_to_item_display("Miner's Pickaxe", f'Price: {miners_pickaxe_price}')
+                elif miners_pickaxe_item_button.is_over(mouse_pos) and items["Miners pickaxe"][0] >= 1:
+                    draw_texts_to_item_display("Miner's Pickaxe", f'Price: {items["Miners pickaxe"][1]}')
                     sell_miners_pickaxe = True
-                elif hunters_bow_item_button.is_over(mouse_pos) and hunters_bow_amount >= 1:
-                    draw_texts_to_item_display("Hunter's Bow", f'Price: {hunters_bow_price}')
+                elif hunters_bow_item_button.is_over(mouse_pos) and items["Hunters bow"][0] >= 1:
+                    draw_texts_to_item_display("Hunter's Bow", f'Price: {items["Hunters bow"][1]}')
                     sell_hunters_bow = True
-                elif fighters_sword_item_button.is_over(mouse_pos) and fighters_sword_amount >= 1:
-                    draw_texts_to_item_display("Fighter's Sword", f'Price: {fighters_sword_price}')
+                elif fighters_sword_item_button.is_over(mouse_pos) and items["Fighters sword"][0] >= 1:
+                    draw_texts_to_item_display("Fighter's Sword", f'Price: {items["Fighters sword"][1]}')
                     sell_fighters_sword = True
-                elif fishermans_rod_item_button.is_over(mouse_pos) and fishermans_rod_amount >= 1:
-                    draw_texts_to_item_display("Fisherman's Rod", f'Price: {fishermans_rod_price}')
+                elif fishermans_rod_item_button.is_over(mouse_pos) and items["Fishermans rod"][0] >= 1:
+                    draw_texts_to_item_display("Fisherman's Rod", f'Price: {items["Fishermans rod"][1]}')
                     sell_fishermans_rod = True
-                elif jack_of_all_trades_item_button.is_over(mouse_pos) and jack_of_all_trades_amount >= 1:
-                    draw_texts_to_item_display("Jack Of All Trades", f'Price: {jack_of_all_trades_price}')
+                elif jack_of_all_trades_item_button.is_over(mouse_pos) and items["Jack of all trades"][0] >= 1:
+                    draw_texts_to_item_display("Jack Of All Trades", f'Price: {items["Jack of all trades"][1]}')
                     sell_jack_of_all_trades = True
 
-        if xp_to_next_level <= 0:
-            level += 1
-            current_xp_to_next_level += 100
-            xp_to_next_level = current_xp_to_next_level
+        if player_attributes["Xp to next level"] <= 0:
+            player_attributes["Level"] += 1
+            player_attributes["Current xp to next level"] += 100
+            player_attributes["Xp to next level"] = player_attributes["Current xp to next level"]
 
 
         quest_button_2.draw(screen, (CYAN))
-        if level < 3:
+        if player_attributes["Level"] < 3:
             quest_button_2.draw_locked_text(screen)
         else:
             quest_button_2.draw_text(screen)
 
         quest_button_3.draw(screen, (CYAN))
-        if level < 5:
+        if player_attributes["Level"] < 5:
             quest_button_3.draw_locked_text(screen)
         else:
             quest_button_3.draw_text(screen)
 
         quest_button_4.draw(screen, (CYAN))
-        if level < 8:
+        if player_attributes["Level"] < 8:
             quest_button_4.draw_locked_text(screen)
         else:
             quest_button_4.draw_text(screen)
@@ -815,12 +826,12 @@ def run_game():
 
         # Draw gold
         gold_display.draw(screen, (CYAN))
-        gold_display.draw_text(screen, f'Gold: {gold_amount}')
+        gold_display.draw_text(screen, f'Gold: {player_attributes["Gold"]}')
 
         # Draw level
         level_display.draw(screen, (CYAN))
-        level_display.draw_level_text(screen, f'Level: {level}')
-        level_display.draw_xp_text(screen, f'XP to next level: {xp_to_next_level}')
+        level_display.draw_level_text(screen, f'Level: {player_attributes["Level"]}')
+        level_display.draw_xp_text(screen, f'XP to next level: {player_attributes["Xp to next level"]}')
 
 
         quest_timer_box.draw(screen, (CYAN))
@@ -852,45 +863,57 @@ def run_game():
 
         # Draw timers to butons
         if current_timer_text == None:
-            screen.blit(quest_1_timer_text, (100, 15))
-            screen.blit(quest_2_timer_text, (465, 15))
-            screen.blit(quest_3_timer_text, (832, 15))
-            screen.blit(quest_4_timer_text, (100, 195))
+            screen.blit(quest_1_timer_text, (120, 15))
+            screen.blit(quest_2_timer_text, (485, 15))
+            screen.blit(quest_3_timer_text, (852, 15))
+            screen.blit(quest_4_timer_text, (110, 195))
         else:
             screen.blit(current_timer_text, (840, 525))
 
         # Draw texts to inventory
-        if debug_item_amount >= 1:
-            debug_item_button.draw_inventory_text(screen, f'Debug Item: {debug_item_amount}', f'Price: {debug_item_price}')
-        if wood_item_amount >= 1:
-            wood_item_button.draw_inventory_text(screen, f'Wood: {wood_item_amount}', f'Price: {wood_item_price}')
-        if stone_item_amount >= 1:
-            stone_item_button.draw_inventory_text(screen, f'Stone: {stone_item_amount}', f'Price: {stone_item_price}')
-        if iron_item_amount >= 1:
-            iron_item_button.draw_inventory_text(screen, f'Iron: {iron_item_amount}', f'Price: {iron_item_price}')
-        if bear_flesh_item_amount >= 1:
-            bear_flesh_item_button.draw_inventory_text(screen, f'Bear Flesh: {bear_flesh_item_amount}', f'Price: {bear_flesh_item_price}')
-        if bear_skin_item_amount >= 1:
-            bear_skin_item_button.draw_inventory_text(screen, f'Bear Skin: {bear_skin_item_amount}', f'Price: {bear_skin_item_price}')
-        if fish_item_amount >= 1:
-            fish_item_button.draw_inventory_text(screen, f'Fish: {fish_item_amount}', f'Price: {fish_item_price}')
-        if woodmans_axe_amount >= 1:
-            woodmans_axe_item_button.draw_inventory_text(screen, f"Woodman's Axe: {woodmans_axe_amount}", f'Price: {woodmans_axe_price}')
-        if miners_pickaxe_amount >= 1:
-            miners_pickaxe_item_button.draw_inventory_text(screen, f"Miner's Pickaxe: {miners_pickaxe_amount}", f'Price: {miners_pickaxe_price}')
-        if hunters_bow_amount >= 1:
-            hunters_bow_item_button.draw_inventory_text(screen, f"Hunter's Bow: {hunters_bow_amount}", f'Price: {hunters_bow_price}')
-        if fighters_sword_amount >= 1:
-            fighters_sword_item_button.draw_inventory_text(screen, f"Fighter's Sword: {fighters_sword_amount}", f'Price: {fighters_sword_price}')
-        if fishermans_rod_amount >= 1:
-            fishermans_rod_item_button.draw_inventory_text(screen, f"Fisherman's Rod: {fishermans_rod_amount}", f'Price: {fishermans_rod_price}')
-        if jack_of_all_trades_amount >= 1:
-            jack_of_all_trades_item_button.draw_inventory_text(screen, f"Jack Of All Trades: {jack_of_all_trades_amount}", f'Price: {jack_of_all_trades_price}')
+        if items["Debug item"][0] >= 1:
+            debug_item_button.draw_inventory_text(screen, f'Debug Item: {items["Debug item"][0]}', f'Price: {items["Debug item"][1]}')
+        if items["Wood"][0] >= 1:
+            wood_item_button.draw_inventory_text(screen, f'Wood: {items["Wood"][0]}', f'Price: {items["Wood"][1]}')
+        if items["Stone"][0] >= 1:
+            stone_item_button.draw_inventory_text(screen, f'Stone: {items["Stone"][0]}', f'Price: {items["Stone"][1]}')
+        if items["Iron"][0] >= 1:
+            iron_item_button.draw_inventory_text(screen, f'Iron: {items["Iron"][0]}', f'Price: {items["Iron"][1]}')
+        if items["Bear flesh"][0] >= 1:
+            bear_flesh_item_button.draw_inventory_text(screen, f'Bear Flesh: {items["Bear flesh"][0]}', f'Price: {items["Bear flesh"][1]}')
+        if items["Bear skin"][0] >= 1:
+            bear_skin_item_button.draw_inventory_text(screen, f'Bear Skin: {items["Bear skin"][0]}', f'Price: {items["Bear skin"][1]}')
+        if items["Fish"][0] >= 1:
+            fish_item_button.draw_inventory_text(screen, f'Fish: {items["Fish"][0]}', f'Price: {items["Fish"][1]}')
+        if items["Woodmans axe"][0] >= 1:
+            woodmans_axe_item_button.draw_inventory_text(screen, f'Woodmans Axe: {items["Woodmans axe"][0]}', f'Price: {items["Woodmans axe"][1]}')
+        if items["Miners pickaxe"][0] >= 1:
+            miners_pickaxe_item_button.draw_inventory_text(screen, f'Miners Pickaxe: {items["Miners pickaxe"][0]}', f'Price: {items["Miners pickaxe"][1]}')
+        if items["Hunters bow"][0] >= 1:
+            hunters_bow_item_button.draw_inventory_text(screen, f'Hunters Bow: {items["Hunters bow"][0]}', f'Price: {items["Hunters bow"][1]}')
+        if items["Fighters sword"][0] >= 1:
+            fighters_sword_item_button.draw_inventory_text(screen, f'Fighters Sword: {items["Fighters sword"][0]}', f'Price: {items["Fighters sword"][1]}')
+        if items["Fishermans rod"][0] >= 1:
+            fishermans_rod_item_button.draw_inventory_text(screen, f'Fishermans Rod: {items["Fishermans rod"][0]}', f'Price: {items["Fishermans rod"][1]}')
+        if items["Jack of all trades"][0] >= 1:
+            jack_of_all_trades_item_button.draw_inventory_text(screen, f'Jack Of All Trades: {items["Jack of all trades"][0]}', f'Price: {items["Jack of all trades"][1]}')
 
         # Update the display
         pygame.display.update()
 
         clock.tick(FPS)
+
+
+def draw_buy_box(text_1, text_2, text_3):
+    global buy_box_display
+    global buy_button
+
+    buy_box_display.draw(screen, (CYAN))
+    buy_box_display.draw_item_name(screen, text_1)
+    buy_box_display.draw_item_price(screen, text_2)
+    buy_box_display.draw_item_info(screen, text_3)
+    buy_button.draw(screen, (CYAN))
+    buy_button.draw_text(screen)
 
 
 # Cyan box around the screen
@@ -902,13 +925,19 @@ gold_display_shop = Gold((BLACK), 255, 600, 250, 115, 259, 637)
 # Display shop inventory
 shop_item_display = Inventory((BLACK), 2, 2, 503, 595)
 
+# Buy box display
+buy_box_display = BuyBox((BLACK), 530, 20, 725, 670, 540, 30, 1000, 30, 540, 90)
+
+# Buy button on box display
+buy_button = Button((BLACK), 760, 570, 250, 100, 40, "BUY", "LEVEL 10 REQUIRED")
+
 # Display items in shop inventory
-woodmans_axe = InventoryButton((BLACK), 2, 2, 500, 20, 4, 2, 20, 2, f"Woodman's Axe: {woodmans_axe_cost}")
-miners_pickaxe = InventoryButton((BLACK), 2, 22, 500, 20, 4, 22, 20, 22, f"Miner's Pickaxe: {miners_pickaxe_cost}")
-hunters_bow = InventoryButton((BLACK), 2, 42, 500, 20, 4, 42, 20, 42, f"Hunter's Bow: {hunters_bow_cost}")
-fighters_sword = InventoryButton((BLACK), 2, 62, 500, 20, 4, 62, 20, 62, f"Fighter's Sword: {fighters_sword_cost}")
-fishermans_rod = InventoryButton((BLACK), 2, 82, 500, 20, 4, 82, 20, 82, f"Fisherman's Rod: {fishermans_rod_cost}")
-jack_of_all_trades = InventoryButton((BLACK), 2, 102, 500, 20, 4, 102, 20, 102, f"Jack Of All Trades: {jack_of_all_trades_cost}")
+woodmans_axe = InventoryButton((BLACK), 2, 2, 500, 20, 4, 2, 20, 2, f'Woodmans Axe: {shop_items["Woodmans axe"]}')
+miners_pickaxe = InventoryButton((BLACK), 2, 22, 500, 20, 4, 22, 20, 22, f'Miners Pickaxe: {shop_items["Miners pickaxe"]}')
+hunters_bow = InventoryButton((BLACK), 2, 42, 500, 20, 4, 42, 20, 42, f'Hunters Bow: {shop_items["Hunters bow"]}')
+fighters_sword = InventoryButton((BLACK), 2, 62, 500, 20, 4, 62, 20, 62, f'Fighters Sword: {shop_items["Fighters sword"]}')
+fishermans_rod = InventoryButton((BLACK), 2, 82, 500, 20, 4, 82, 20, 82, f'Fishermans Rod: {shop_items["Fishermans rod"]}')
+jack_of_all_trades = InventoryButton((BLACK), 2, 102, 500, 20, 4, 102, 20, 102, f'Jack Of All Trades: {shop_items["Jack of all trades"]}')
 
 # Back button to go back to the game
 back_button = Button((BLACK), 2, 600, 250, 115, 40, "BACK")
@@ -922,23 +951,18 @@ fishermans_rod_bought = False
 jack_of_all_trades_bought = False
 
 def shop():
+    woodmans_axe_clicked = False
+    miners_pickaxe_clicked = False
+    hunters_bow_clicked = False
+    fighters_sword_clicked = False
+    fishermans_rod_clicked = False
+    jack_of_all_trades_clicked = False
+
     running = True
     rand_amount = 0
 
     global gold_amount
-
-    global woodmans_axe_amount
-    global woodmans_axe_price
-    global miners_pickaxe_amount
-    global miners_pickaxe_price
-    global hunters_bow_amount
-    global hunters_bow_price
-    global fighters_sword_amount
-    global fighters_sword_price
-    global fishermans_rod_amount
-    global fishermans_rod_price
-    global jack_of_all_trades_amount
-    global jack_of_all_trades_price
+    global level
 
     global woodmans_axe_bought
     global miners_pickaxe_bought
@@ -968,36 +992,92 @@ def shop():
                     running = False
                     run_game()
 
-                if woodmans_axe.is_over(mouse_pos) and gold_amount >= 70:
-                    gold_amount -= 70
-                    woodmans_axe_amount, woodmans_axe_price = quest_reward(rand_amount, woodmans_axe_amount, woodmans_axe_price, 40, 1, 1)
-                    woodmans_axe_bought = True
-                    rand_amount = 0
-                if miners_pickaxe.is_over(mouse_pos) and gold_amount >= 320:
-                    gold_amount -= 320
-                    miners_pickaxe_amount, miners_pickaxe_price = quest_reward(rand_amount, miners_pickaxe_amount, miners_pickaxe_price, 120, 1, 1)
-                    miners_pickaxe_bought = True
-                    rand_amount = 0
-                if hunters_bow.is_over(mouse_pos) and gold_amount >= 900:
-                    gold_amount -= 900
-                    hunters_bow_amount, hunters_bow_price = quest_reward(rand_amount, hunters_bow_amount, hunters_bow_price, 720, 1, 1)
-                    hunters_bow_bought = True
-                    rand_amount = 0
-                if fighters_sword.is_over(mouse_pos) and gold_amount >= 2500:
-                    gold_amount -= 2500
-                    fighters_sword_amount, fighters_sword_price = quest_reward(rand_amount, fighters_sword_amount, fighters_sword_price, 1900, 1, 1)
-                    fighters_sword_bought = True
-                    rand_amount = 0
-                if fishermans_rod.is_over(mouse_pos) and gold_amount >= 5300:
-                    gold_amount -= 5300
-                    fishermans_rod_amount, fishermans_rod_price = quest_reward(rand_amount, fishermans_rod_amount, fishermans_rod_price, 4400, 1, 1)
-                    fishermans_rod_bought = True
-                    rand_amount = 0
-                if jack_of_all_trades.is_over(mouse_pos) and gold_amount >= 10000:
-                    gold_amount -= 10000
-                    jack_of_all_trades_amount, jack_of_all_trades_price = quest_reward(rand_amount, jack_of_all_trades_amount, jack_of_all_trades_price, 8000, 1, 1)
-                    jack_of_all_trades_bought = True
-                    rand_amount = 0
+                if woodmans_axe.is_over(mouse_pos) and player_attributes["Gold"] >= 70:
+                    woodmans_axe_clicked = True
+
+                    miners_pickaxe_clicked = False
+                    hunters_bow_clicked = False
+                    fighters_sword_clicked = False
+                    fishermans_rod_clicked = False
+                    jack_of_all_trades_clicked = False
+                if miners_pickaxe.is_over(mouse_pos) and player_attributes["Gold"] >= 320:
+                    miners_pickaxe_clicked = True
+
+                    woodmans_axe_clicked = False
+                    hunters_bow_clicked = False
+                    fighters_sword_clicked = False
+                    fishermans_rod_clicked = False
+                    jack_of_all_trades_clicked = False
+                if hunters_bow.is_over(mouse_pos) and player_attributes["Gold"] >= 900:
+                    hunters_bow_clicked = True
+
+                    miners_pickaxe_clicked = False
+                    woodmans_axe_clicked = False
+                    fighters_sword_clicked = False
+                    fishermans_rod_clicked = False
+                    jack_of_all_trades_clicked = False
+                if fighters_sword.is_over(mouse_pos) and player_attributes["Gold"] >= 2500:
+                    fighters_sword_clicked = True
+
+                    miners_pickaxe_clicked = False
+                    hunters_bow_clicked = False
+                    woodmans_axe_clicked = False
+                    fishermans_rod_clicked = False
+                    jack_of_all_trades_clicked = False
+                if fishermans_rod.is_over(mouse_pos) and player_attributes["Gold"] >= 5300:
+                    fishermans_rod_clicked = True
+
+                    miners_pickaxe_clicked = False
+                    hunters_bow_clicked = False
+                    fighters_sword_clicked = False
+                    woodmans_axe_clicked = False
+                    jack_of_all_trades_clicked = False
+                if jack_of_all_trades.is_over(mouse_pos) and player_attributes["Gold"] >= 10000:
+                    jack_of_all_trades_clicked = True
+
+                    miners_pickaxe_clicked = False
+                    hunters_bow_clicked = False
+                    fighters_sword_clicked = False
+                    fishermans_rod_clicked = False
+                    woodmans_axe_clicked = False
+
+                if buy_button.is_over(mouse_pos):
+                    if woodmans_axe_clicked == True:
+                        player_attributes["Gold"] -= 70
+                        items["Woodmans axe"][0], items["Woodmans axe"][1] = quest_reward(rand_amount, items["Woodmans axe"][0], items["Woodmans axe"][1], 40, 1, 1)
+                        woodmans_axe_bought = True
+                        rand_amount = 0
+                        woodmans_axe_clicked = False
+                    elif miners_pickaxe_clicked == True:
+                        player_attributes["Gold"] -= 320
+                        items["Miners pickaxe"][0], items["Miners pickaxe"][1] = quest_reward(rand_amount, items["Miners pickaxe"][0], items["Miners pickaxe"][1], 120, 1, 1)
+                        miners_pickaxe_bought = True
+                        rand_amount = 0
+                        miners_pickaxe_clicked = False
+                    elif hunters_bow_clicked == True:
+                        player_attributes["Gold"] -= 900
+                        items["Hunters bow"][0], items["Hunters bow"][1] = quest_reward(rand_amount, items["Hunters bow"][0], items["Hunters bow"][1], 720, 1, 1)
+                        hunters_bow_bought = True
+                        rand_amount = 0
+                        hunters_bow_clicked = False
+                    elif fighters_sword_clicked == True:
+                        player_attributes["Gold"] -= 2500
+                        items["Fighters sword"][0], items["Fighters sword"][1] = quest_reward(rand_amount, items["Fighters sword"][0], items["Fighters sword"][1], 1900, 1, 1)
+                        fighters_sword_bought = True
+                        rand_amount = 0
+                        fighters_sword_clicked = False
+                    elif fishermans_rod_clicked == True:
+                        player_attributes["Gold"] -= 5300
+                        items["Fishermans rod"][0], items["Fishermans rod"][1] = quest_reward(rand_amount, items["Fishermans rod"][0], items["Fishermans rod"][1], 4400, 1, 1)
+                        fishermans_rod_bought = True
+                        rand_amount = 0
+                        fishermans_rod_clicked = False
+                    elif jack_of_all_trades_clicked == True and level >= 10:
+                        player_attributes["Gold"] -= 10000
+                        items["Jack of all trades"][0], items["Jack of all trades"][1] = quest_reward(rand_amount, items["Jack of all trades"][0], items["Jack of all trades"][1], 8000, 1, 1)
+                        jack_of_all_trades_bought = True
+                        rand_amount = 0
+                        jack_of_all_trades_clicked = False
 
 
 
@@ -1007,28 +1087,50 @@ def shop():
         # Draw outlines for shop
         shop_item_display.draw(screen, (CYAN))
 
+        if woodmans_axe_clicked == True:
+            draw_buy_box("Woodmans Axe", f'Price: {shop_items["Woodmans axe"]}', "Reduces wood chopping time, get more wood and receive more xp")
+        elif miners_pickaxe_clicked == True:
+            draw_buy_box("Miners Pickaxe", f'Price: {shop_items["Miners pickaxe"]}', "Reduces mining time, get more ores and receive more xp")
+        elif hunters_bow_clicked == True:
+            draw_buy_box("Hunters Bow", f'Price: {shop_items["Hunters bow"]}', "Reduces hunting time")
+        elif fighters_sword_clicked == True:
+            draw_buy_box("Fighters Sword", f'Price: {shop_items["Fighters sword"]}', "Get more items when hunting and receive more xp")
+        elif fishermans_rod_clicked == True:
+            draw_buy_box("Fishermans Rod", f'Price: {shop_items["Fishermans rod"]}', "Reduces fishing time, get more fish and receive more xp")
+        elif jack_of_all_trades_clicked == True and level >= 10:
+            draw_buy_box("Jack Of All Trades", f'Price: {shop_items["Jack of all trades"]}', "Get more items from quest and receive more xp")
+        elif jack_of_all_trades_clicked == True and level <= 10:
+            buy_box_display.draw(screen, (CYAN))
+            buy_box_display.draw_item_name(screen, "Jack Of All Trades")
+            buy_box_display.draw_item_price(screen, f'Price: {shop_items["Jack of all trades"]}')
+            buy_box_display.draw_item_info(screen, "Reduces all quest times and get more items")
+            buy_button.draw(screen, (CYAN))
+            buy_button.draw_locked_text(screen)
+
+
+
         # Draw items on screen
         woodmans_axe.draw(screen)
-        woodmans_axe.draw_inventory_text(screen, f"Woodman's Axe : {woodmans_axe_cost} Gold")
+        woodmans_axe.draw_inventory_text(screen, f'Woodmans Axe : {shop_items["Woodmans axe"]} Gold')
 
         miners_pickaxe.draw(screen)
-        miners_pickaxe.draw_inventory_text(screen, f"Miner's Pickaxe : {miners_pickaxe_cost} Gold")
+        miners_pickaxe.draw_inventory_text(screen, f'Miners Pickaxe : {shop_items["Miners pickaxe"]} Gold')
 
         hunters_bow.draw(screen)
-        hunters_bow.draw_inventory_text(screen, f"Hunter's Bow : {hunters_bow_cost} Gold")
+        hunters_bow.draw_inventory_text(screen, f'Hunters Bow : {shop_items["Hunters bow"]} Gold')
 
         fighters_sword.draw(screen)
-        fighters_sword.draw_inventory_text(screen, f"Fighter's Sword : {fighters_sword_cost} Gold")
+        fighters_sword.draw_inventory_text(screen, f'Fighters Sword : {shop_items["Fighters sword"]} Gold')
 
         fishermans_rod.draw(screen)
-        fishermans_rod.draw_inventory_text(screen, f"Fisherman's Rod : {fishermans_rod_cost} Gold")
+        fishermans_rod.draw_inventory_text(screen, f'Fishermans Rod : {shop_items["Fishermans rod"]} Gold')
 
         jack_of_all_trades.draw(screen)
-        jack_of_all_trades.draw_inventory_text(screen, f"Jack Of All Trades : {jack_of_all_trades_cost} Gold")
+        jack_of_all_trades.draw_inventory_text(screen, f'Jack Of All Trades : {shop_items["Jack of all trades"]} Gold')
 
         # Draw gold
         gold_display_shop.draw(screen, (CYAN))
-        gold_display_shop.draw_text(screen, f'Gold: {gold_amount}')
+        gold_display_shop.draw_text(screen, f'Gold: {player_attributes["Gold"]}')
 
         # Buttons
         back_button.draw(screen, (CYAN))
