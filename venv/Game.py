@@ -777,20 +777,20 @@ def run_game():
                 elif fish_item_button.is_over(mouse_pos) and items["Fish"][0] >= 1:
                     draw_texts_to_item_display("Fish", f'Price: {items["Fish"][1]}')
                     sell_fish = True
-                elif woodmans_axe_item_button.is_over(mouse_pos) and items["Woodman's axe"][0] >= 1:
-                    draw_texts_to_item_display("Woodman's Axe", f'Price: {items["Woodmans axe"][1]}')
+                elif woodmans_axe_item_button.is_over(mouse_pos) and items["Woodmans axe"][0] >= 1:
+                    draw_texts_to_item_display("Woodmans Axe", f'Price: {items["Woodmans axe"][1]}')
                     sell_woodmans_axe = True
                 elif miners_pickaxe_item_button.is_over(mouse_pos) and items["Miners pickaxe"][0] >= 1:
-                    draw_texts_to_item_display("Miner's Pickaxe", f'Price: {items["Miners pickaxe"][1]}')
+                    draw_texts_to_item_display("Miners Pickaxe", f'Price: {items["Miners pickaxe"][1]}')
                     sell_miners_pickaxe = True
                 elif hunters_bow_item_button.is_over(mouse_pos) and items["Hunters bow"][0] >= 1:
-                    draw_texts_to_item_display("Hunter's Bow", f'Price: {items["Hunters bow"][1]}')
+                    draw_texts_to_item_display("Hunters Bow", f'Price: {items["Hunters bow"][1]}')
                     sell_hunters_bow = True
                 elif fighters_sword_item_button.is_over(mouse_pos) and items["Fighters sword"][0] >= 1:
-                    draw_texts_to_item_display("Fighter's Sword", f'Price: {items["Fighters sword"][1]}')
+                    draw_texts_to_item_display("Fighters Sword", f'Price: {items["Fighters sword"][1]}')
                     sell_fighters_sword = True
                 elif fishermans_rod_item_button.is_over(mouse_pos) and items["Fishermans rod"][0] >= 1:
-                    draw_texts_to_item_display("Fisherman's Rod", f'Price: {items["Fishermans rod"][1]}')
+                    draw_texts_to_item_display("Fishermans Rod", f'Price: {items["Fishermans rod"][1]}')
                     sell_fishermans_rod = True
                 elif jack_of_all_trades_item_button.is_over(mouse_pos) and items["Jack of all trades"][0] >= 1:
                     draw_texts_to_item_display("Jack Of All Trades", f'Price: {items["Jack of all trades"][1]}')
